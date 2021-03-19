@@ -1,26 +1,60 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useState } from 'react';
 
-function App() {
+import { DashBoard } from './components/DashBoard';
+import { Header } from './components/Header';
+import { GlobalStyle } from './styles/global';
+import Modal from 'react-modal';
+import { NewTransationModal } from './components/NewTransactionModal';
+import {DeleteTransaction} from './components/DeleteTransaction'
+
+
+import {TransactionProvider} from './components/Contextos/TransactionsContext';
+
+export function App() {
+  
+  Modal.setAppElement('#root');
+
+  const [isNewTransactionModalOpen, setIsNewTransactionModalOpen] = useState(false);
+  const [isDeleteTransModalOpen, setIsDeleteTransModalOpen] = useState(false);
+
+  const [idToDelete, setIdaToDelete] = useState('');
+
+  function handleOpenNewTransactionModal(){
+    setIsNewTransactionModalOpen(true);
+  }
+
+  function handleCloseNewTransactionModal(){
+    setIsNewTransactionModalOpen(false);
+  }
+
+  function handleOpenDeleteTransaction(id:string){
+    setIdaToDelete(id);
+    setIsDeleteTransModalOpen(true);
+  }
+
+  function handleCloseDeleteTransaction(){
+    setIsDeleteTransModalOpen(false);
+  }
+
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <>
+      <TransactionProvider>
+        <GlobalStyle/>
+        <Header onOpenNewTransactionModal={handleOpenNewTransactionModal} />
+
+        <DashBoard openDeleteModal ={handleOpenDeleteTransaction}/>
+
+        <DeleteTransaction  
+          closeDeleteModal ={handleCloseDeleteTransaction}
+          isOpenDelete ={isDeleteTransModalOpen}
+          idToDelete={idToDelete}
+        />
+
+        <NewTransationModal onRequestClose={handleCloseNewTransactionModal} isOpen={isNewTransactionModalOpen} />
+        
+      </TransactionProvider>
+
+      </>
   );
 }
-
-export default App;
